@@ -70,7 +70,7 @@ void setup()
             {
               server.send(200, "text/plain", "setleds");
               SimpleFunction_2 *f = new SimpleFunction_2();
-              f->getRGB(100, 0, 0);
+              f->getRGB(0,  100, 0);
               checkFadeAndSetLedFunction(f);
             });
   server.on("/rainbow", []()

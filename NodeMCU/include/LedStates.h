@@ -99,7 +99,6 @@ public:
 
   void setFunction(LedFunction *newFunction)
   {
-    uint8_t rgb[3] = {0, 0, 0};
     if (oldfunction)
       delete oldfunction;
     if (function)

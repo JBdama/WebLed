@@ -2,7 +2,7 @@ import sys, os               # Import onto path
 import codecs                # Import codes for html, css and js
 #import Cpp_header as cpp 
 this_folder = os.path.dirname(os.path.abspath(__file__))  #this line locates the script in the folder where it is stored
-sys.path.append('/home/julius/opt/WebMeb/WebLed-1/')        # Add outer directory
+sys.path.append(os.path.abspath('../'))        # Add outer directory
 
 beginning = "<!--   \n   HTML_HELPER   \n      const char html_page[] = TO_STRING(   \n    <!-- -->"
 ending = "<!-- ); // end of TO_STRING <!-- --> "

@@ -35,7 +35,6 @@ class SimpleFunction: public LedFunction
       for (int i = 0; i < state->count; i++)
         state->setRgb(i, rgb[0], rgb[1], rgb[2], mode);
       set = true;
-      Serial.println("r");
 
     }
 };
