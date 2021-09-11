@@ -15,6 +15,7 @@
 #include <vector>
 #include <bits/stdc++.h>
 
+#include "text.h"
 #include "LedStates.h"
 #include "SimpleFunction.h"
 #include "SimpleFunction_2.h"
@@ -28,14 +29,14 @@ using namespace std;
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 ESP8266WebServer server(80);
 LedStates states(strip);
-
+//files file();
 String slave;
 String newslave;
 vector<String> slaves_list;
 uint8_t slaves_count = 0;
 void wifiSetup();
 void scanSlave();
-void handleRoot()
+void handleRoot() 
 {
   String message = "<html><head></head><body style='font-family: sans-serif; font-size: 12px'>Following functions are available:<br><br>";
   server.send(200, "text/html", message);

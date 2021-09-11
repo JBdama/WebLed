@@ -11,9 +11,11 @@ cwd = os.getcwd()
 
 #print("a",cwd, "b")
 def readhtml ():
-    html = open(os.path.join("After","index.html"), "r")
-    html = html.read()
-    return html
+    with open(os.path.join("After", "index.html"), "r") as f:
+        html = f.read()
+        html.replace('"', "'")
+        return html
+
 
 home = Path(Path.cwd()).parent
 print(Path.cwd())
@@ -30,6 +32,7 @@ def makefile(list, html, final_file):
         with open(os.path.join("After",css_file), "r") as f:
             content_css += f.read()
             f.close()
+    content_css.replace('"', "'")
     content_css = content_css.strip("\n")
     with open(os.path.join("NodeMCU/src", final_file), "w") as f:
         print(final_file)
