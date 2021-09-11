@@ -91,6 +91,7 @@ html = readhtml()
 html1, html2 = edithtml(html)
 htnl1, html2 = "", ""
 css = readcss()
-html = ""
+html = " "
+test = ""
 css =  ""
 writehtml(html1, html2, css, js)
