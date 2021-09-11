@@ -17,11 +17,11 @@ def readhtml ():
 
 home = Path(Path.cwd()).parent
 print(Path.cwd())
-for files in os.listdir(cwd):
+for files in os.listdir("NodeMCU/src"):
     print(files)
-with open(os.path.join(cwd+"/NodeMCU/src", "text.txt"),"w" ) as f:
-    f.write("Hier")
-    f.close()
+#with open(os.path.join(cwd+"/NodeMCU/src/text.txt", ),"w" ) as f:
+#    f.write("Hier")
+#    f.close()
 
 
 def makefile(list, html, final_file):
@@ -30,9 +30,11 @@ def makefile(list, html, final_file):
         with open(os.path.join("After",css_file), "r") as f:
             content_css += f.read()
             f.close()
-    with open(os.path.join("NodeMCU\\src", final_file), "w") as f:
+    content_css = content_css.strip("\n")
+    with open(os.path.join("NodeMCU/src", final_file), "w") as f:
         print(final_file)
-        _html = html.splitlines()
+        html = html.splitlines()
+        content_css = content_css.splitlines()
         f.write(cpp1)
         f.write('"')
         head = -2
@@ -40,11 +42,12 @@ def makefile(list, html, final_file):
             if line == "<head>":
                 head  = i
             if i == head+1:
-                f.write("\t <style> ")
-                f.write(content_css)
-                f.write("\t </style>")
+                f.write("<style> ")
+                for inline in content_css:
+                    f.writelines(line)
+                f.write(" </style>")
                 print("ja")
-            f.write(line) 
+            f.writelines(line) 
             #f.write("\n") 
         f.write('"')
         f.write(cpp3)
@@ -52,7 +55,7 @@ def makefile(list, html, final_file):
 
 def make_h(final_file):
     cwd = os.getcwd()
-    final = cwd + "\\NodeMCU\\src\\text.h"
+    final = cwd + "/NodeMCU/src/text.h"
     print(final)
     if  os.path.isfile(final):
         print("TRUE")
@@ -63,8 +66,8 @@ def make_h(final_file):
     #os.rename(final_file, base + ".h")
 
 if __name__  == "__main__":
-    #dest = cwd + "\\NodeMCU\\src\\text.txt"
-    #html = readhtml()
-    #makefile(css_list, html, "text.txt")
+    dest = cwd + "/NodeMCU/src/text.txt"
+    html = readhtml()
+    makefile(css_list, html, "text.txt")
     #make_h(dest)
-    pass
+    
