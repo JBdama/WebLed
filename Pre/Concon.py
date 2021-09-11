@@ -1,6 +1,6 @@
 import sys, os
 import codecs
-
+from pathlib import Path
 css_list =["main.css", "colorpicker.css",  "nav.css", "slider.css"]         # List with all CSS filenames
 
 cpp1=  "class files {\n\tString get_html() {\n\t\tString message =F("
@@ -14,6 +14,15 @@ def readhtml ():
     html = open(os.path.join("After","index.html"), "r")
     html = html.read()
     return html
+
+home = Path(Path.cwd()).parent
+print(Path.cwd())
+for files in os.listdir(cwd):
+    print(files)
+with open(os.path.join(cwd+"/NodeMCU/src", "text.txt"),"w" ) as f:
+    f.write("Hier")
+    f.close()
+
 
 def makefile(list, html, final_file):
     content_css = ""
@@ -54,7 +63,8 @@ def make_h(final_file):
     #os.rename(final_file, base + ".h")
 
 if __name__  == "__main__":
-    dest = cwd + "\\NodeMCU\\src\\text.txt"
-    html = readhtml()
-    makefile(css_list, html, "text.txt")
-    make_h(dest)
+    #dest = cwd + "\\NodeMCU\\src\\text.txt"
+    #html = readhtml()
+    #makefile(css_list, html, "text.txt")
+    #make_h(dest)
+    pass
