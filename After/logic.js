@@ -86,7 +86,6 @@ function sCol(na, col) {
 }
 
 
-<<<<<<< HEAD
 }
 function toggleSync() {
   sync = !sync;
@@ -131,5 +130,3 @@ function defColor(arg) {
   d.getElementById(arg).className = "active";
   lastC = arg;
 }
-=======
->>>>>>> 8995545f434d8858ab6223dbd179a2fac426c081
