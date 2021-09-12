@@ -17,7 +17,7 @@ def read_css(path, files):
         for line in content:
             css += line
         css += "\n"
-    print(css)
+    #print(css)
     return css
 
 
@@ -25,20 +25,18 @@ def edithtml(html):
     html_copy = html.copy()    # Create copy to not iterate in
     for i, line in enumerate(html):
         if line == "<head>":
-            #print(i)
-            css_count = len(css_list)
             half_one = html_copy[:i+1]
-            half_two = html_copy[i+1+css_count:]    # +csscount because need to remove the remaining link includes
+            half_two = html_copy[i+1+len(css_list):]    # +csscount because need to remove the remaining link includes
             half_two.pop()                          # Remove the </html> part 
             return half_one , half_two 
-            
-    
-    #print(html_copy)
-
 
 def writehtml(html1, html2, css, js):
-    def write_list(f, content):
+    def write_list(content):
         final.append("".join(content))
+    write_list(html1)
+    #write_list(css)
+    write_list(html2)
+    write_list(js)
     with open(os.path.join("NodeMCU/src", "text.txt"), "w") as f:
 
         for line in html1:
@@ -55,15 +53,16 @@ def writehtml(html1, html2, css, js):
         f.write('\n  </script>')
         f.write('\n</html>')
         f.close()
+    print(final)
 
 def calculate():
     #print(os.getcwd())
     js = read_file("After", "logic.js")
     html = read_file("After", "index.html")
     css = read_css("After", css_list)
-    #html1, html2 = edithtml(html)
-    html1 = " "
-    html2 = " "
+    html1, html2 = edithtml(html)
+    #html1 = " "
+    #html2 = " "
     test = ""
     #css =  ""
     writehtml(html1, html2, css, js)
