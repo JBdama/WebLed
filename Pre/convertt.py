@@ -1,7 +1,6 @@
 import os
 import codecs
 css_list =[ "colorpicker.css",  "nav.css", "slider.css", "main.css"]         # List with all CSS filenames
-final = []
 
 def read_file(path, file):
     with codecs.open(os.path.join(path, file), "r", encoding="utf-8") as f:
@@ -11,66 +10,60 @@ def read_file(path, file):
         return  content_list
 
 def read_css(path, files):
-    css = ""
+    css = []
     for c in files:
         content = read_file(path, c)
-        for line in content:
-            css += line
-        css += "\n"
-    #print(css)
+        css.append(content)
     return css
-
-
-def edithtml(html):
-    html_copy = html.copy()    # Create copy to not iterate in
+                                                    
+def edithtml(html):                                     # Function to split html at the place where css should be inserted
+    h_file = html.copy()                             # Create copy to not iterate in
     for i, line in enumerate(html):
         if line == "<head>":
-            half_one = html_copy[:i+1]
-            half_two = html_copy[i+1+len(css_list):]    # +csscount because need to remove the remaining link includes
-            half_two.pop()                          # Remove the </html> part 
+            half_one = h_file[:i+1]
+            half_two = h_file[i+1+len(css_list):]     # +csscount because need to remove the remaining link includes
+            half_two.pop()
             return half_one , half_two 
 
-def writehtml(html1, html2, css, js):
-    def write_list(content):
-        final.append("".join(content))
-    write_list(html1)
-    #write_list(css)
-    write_list(html2)
-    write_list(js)
-    with open(os.path.join("NodeMCU/src", "text.txt"), "w") as f:
+def writehtml(html1, html2, css_list, js):
+    final = []
+    final.append("".join(html1))
+    final.append("<style>")
+    for css in css_list:
+        final.append("".join(css))
+    final.append("</style>")
+    final.append("".join(html2))
+    final.append("<script>")
+    final.append("".join(js))
+    final.append("</script>")
+    final.append("</html>")
+    print(len(final))
+    return final
 
-        for line in html1:
-            f.write(line)
-        f.write('\n  <style>\n')
-        f.write(css)
-        f.write('  </style>\n')
-
-        for line in html2:
-            f.write(line)
-        f.write('\n  <script> \n ')
-        for line in js:
-            f.write(line)
-        f.write('\n  </script>')
-        f.write('\n</html>')
+def write_h(html):
+    file = os.path.join("NodeMCU/src", "text.txt")
+    with open(file, "w") as f:
+        h_file = []
+        h_file.append("using namespace std;\nclass files {\n\tpublic:\n\tString get_html() {\n\t\tString message =")
+        for line in html:
+            h_file.append('"'+line+'\\n "\n')
+        h_file[1] = " F("+h_file[1]
+        h_file[-1] = '"'+html[-1] + '");'
+        h_file.append("\n\treturn message;\n\t}\n};")
+        f.writelines(h_file)
         f.close()
-    print(final)
+    base = os.path.splitext(file)[0]
+    os.rename(file, base+".h")
 
 def calculate():
-    #print(os.getcwd())
     js = read_file("After", "logic.js")
     html = read_file("After", "index.html")
     css = read_css("After", css_list)
     html1, html2 = edithtml(html)
-    #html1 = " "
-    #html2 = " "
-    test = ""
-    #css =  ""
-    writehtml(html1, html2, css, js)
+    newhtml = writehtml(html1, html2, css, js)
+    write_h(newhtml)
+
 calculate()
 
-css = ""
 
 
-#css = css.splitlines()
-#css = "".join(css)
-#print(css)

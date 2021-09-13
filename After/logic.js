@@ -5,7 +5,7 @@ var theme = true;
 var d = document;
 var lastC = null;
 var json = null;
-var color_storage = { "c1": "#000000", "c2": "#000000", "c3": "#000000" }
+var color_storage = { "c1": "#000000", "c2": "#000000", "c3": "#000000" };
 let colorIndicator = document.getElementById('color-indicator');
 var colorPicker = new iro.ColorPicker("#color-picker", {
   width: 180, color: '#fff',
@@ -49,19 +49,19 @@ colorPicker.on("input:end", function (input) {
   if (lastC !== null) {
     d.getElementById(lastC).style.backgroundColor = input.hexString;
     color_storage[lastC] = input.hexString;
-    //console.log(color_storage);
+    /*console.log(color_storage);*/
     localStorage.setItem('color', JSON.stringify(color_storage));
     json = JSON.parse(localStorage.getItem('color'));
-    //console.log(json);
+    /*console.log(json);*/
 
   }
 });
 function posting(arg) {
   console.log("Es wird gefetched:",arg, typeof(arg));
   let x = null;
-  //requestJSON(arg);
+  /*requestJSON(arg);*/
 }
-// Funktion um JSON zu übermitteln
+/* Funktion um JSON zu übermitteln */
 function requestJSON(arg) {
   console.log(arg);
   fetch('/post', {
@@ -86,7 +86,7 @@ function sCol(na, col) {
 }
 
 
-}
+
 function toggleSync() {
   sync = !sync;
   d.getElementById('buttonSync').className = (sync) ? "active" : "";
@@ -107,20 +107,20 @@ function selectButton(button) {
 }
 function defColor(arg) {
   var color2 = {r:0, g:0, b:0};
-  var rgb = ["r", "g", "b"]
+  var rgb = ["r", "g", "b"];
 
   console.log(arg);
   let col = d.getElementById(arg).style.backgroundColor;
-  //console.log(`Color ist ${col}`);
-  let newcol = col.slice(4, -1)
-  newcol = newcol.split(",")
+  /*console.log(`Color ist ${col}`); */
+  let newcol = col.slice(4, -1);
+  newcol = newcol.split(",");
   for (let x in newcol) color2[rgb[x]] = parseInt(newcol[x]);
-  posting(color2)
+  posting(color2);
   colorPicker.color.set(col);
 
   if (lastC == arg) {
     d.getElementById(arg).className = "inactive";
-    console.log(";(")
+    console.log(";(");
     lastC = null;
     return;
   }

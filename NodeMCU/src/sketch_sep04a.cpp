@@ -32,14 +32,14 @@ LedStates states(strip);
 //files file();
 String slave;
 String newslave;
+files file;
 vector<String> slaves_list;
 uint8_t slaves_count = 0;
 void wifiSetup();
 void scanSlave();
 void handleRoot() 
 {
-  String message = "<html><head></head><body style='font-family: sans-serif; font-size: 12px'>Following functions are available:<br><br>";
-  server.send(200, "text/html", message);
+  server.send(200, "text/html", file.get_html());
 }
 void handleNotFound()
 {
