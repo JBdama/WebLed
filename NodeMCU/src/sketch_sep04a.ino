@@ -11,6 +11,8 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <Arduino.h>
+#include <ArduinoJson.h>
+
 #include <Adafruit_NeoPixel.h>
 #include <vector>
 #include <bits/stdc++.h>
@@ -37,7 +39,9 @@ vector<String> slaves_list;
 uint8_t slaves_count = 0;
 void wifiSetup();
 void scanSlave();
-void handleRoot() 
+void handleLed();
+void handleJSON();
+void handleRoot()
 {
   server.send(200, "text/html", file.get_html());
 }
@@ -67,20 +71,7 @@ void setup()
               f->getRGB(100, 0, 0);
               checkFadeAndSetLedFunction(f);
             });
-  server.on("/wave", []()
-            {
-              server.send(200, "text/plain", "setleds");
-              SimpleFunction_2 *f = new SimpleFunction_2();
-              f->getRGB(0,  100, 0);
-              checkFadeAndSetLedFunction(f);
-            });
-  server.on("/rainbow", []()
-            {
-              server.send(200, "text/plain", "setleds");
-              SimpleFunction_3 *f = new SimpleFunction_3();
-              f->getRGB(0, 0, 100);
-              checkFadeAndSetLedFunction(f);
-            });
+  server.on("/json", handleJSON);
   server.begin();
   strip.begin();
   strip.show();
@@ -108,7 +99,7 @@ void wifiSetup()
   Serial.println(WiFi.localIP());
   String ip = WiFi.localIP().toString();
   String MDNS_name = "esp";
-  MDNS_name += ip.substring(ip.length()-2);
+  MDNS_name += ip.substring(ip.length() - 2);
   if (!MDNS.begin(MDNS_name))
   { // Start the mDNS responder for esp8266.local
     Serial.println("Error setting up MDNS responder!");
@@ -144,4 +135,17 @@ void scanSlave()
   {
   }
   //Serial.println(slave_array[i]);
+}
+void handleJSON()
+{
+  String data = server.arg("plain");
+  Serial.println(data);
+  StaticJsonDocument<200> doc;
+  DeserializationError error = deserializeJson(doc, data);
+  if (error)
+  {
+    Serial.println("Error");
+    Serial.println(error.c_str());
+  }
+  server.send(200, "Daten Empfangen");
 }

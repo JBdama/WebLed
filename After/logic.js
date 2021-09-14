@@ -40,7 +40,6 @@ loadPreset();
 
 colorPicker.on("color:change", function (color) {
   colorIndicator.style.backgroundColor = color.hexString;
-
 });
 console.log(json);
 colorPicker.on("input:end", function (input) {
@@ -59,12 +58,12 @@ colorPicker.on("input:end", function (input) {
 function posting(arg) {
   console.log("Es wird gefetched:",arg, typeof(arg));
   let x = null;
-  /*requestJSON(arg);*/
+  requestJSON(arg);
 }
 /* Funktion um JSON zu übermitteln */
 function requestJSON(arg) {
   console.log(arg);
-  fetch('/post', {
+  fetch('/json', {
     method: 'post',
     headers: {
       'Accept': 'application/json',
@@ -101,7 +100,7 @@ function selectButton(button) {
   if (last !== null) {
     d.getElementById(last).className = "inactive";
   }
-  d.getElementById(button).className = "active"
+  d.getElementById(button).className = "active";
   last = button;
 
 }
