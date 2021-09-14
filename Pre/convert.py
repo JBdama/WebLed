@@ -1,7 +1,5 @@
 import os
 import codecs
-css_list =[ "colorpicker.css",  "nav.css", "slider.css", "main.css"]         # List with all CSS filenames
-js_list = [ "logic.js"]                                                      # List with all JS filenames
 
 def read_file(path, file):
     with codecs.open(os.path.join(path, file), "r", encoding="utf-8") as f:  # Read the file with UTF-8 encoding
@@ -10,7 +8,7 @@ def read_file(path, file):
         f.close()
     return  content_list
                                       
-def cut_html(html): # Function to split html
+def cut_html(html, css_list, js_list): # Function to split html
     for i, line in enumerate(html):
         if line == "</head>":                                                # Find place to cut
             c = i
@@ -37,19 +35,21 @@ def write_h(path, file, html):                                                  
         f.writelines(h_file)
         f.close()
 
-def run(source, dest, name):                            # Runs script
+def run(source, dest, name, css_list, js_list):                            # Runs script
     html = read_file(source, "index.html")
     css = [read_file(source, c) for c in css_list]
     js = [read_file(source, j) for j in js_list]
-    head, body = cut_html(html)
+    head, body = cut_html(html, css_list, js_list)
     file = write_html(head, body, css, js)
     write_h(dest, name, file)
 
 if __name__ == "__main__":
+    css_list =[ "colorpicker.css",  "nav.css", "slider.css", "main.css"]         # List with all CSS filenames
+    js_list = [ "logic.js"]                                                      # List with all JS filenames
     source = "After"
     destination = "NodeMCU/src"
     name = "text.h"
-    run(source, destination, name)
+    run(source, destination, name, css_list, js_list)
 
 
 

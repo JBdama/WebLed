@@ -1,12 +1,15 @@
-var slider = document.getElementById("myRange");
+var slider = document.getElementById("sliderBri");
 var isOn = true;
 var sync = true;
 var theme = true;
 var d = document;
 var lastC = null;
 var json = null;
+var c = {r:0,g:0,b:0};
+var b = 120;
+var f = 0;
 var color_storage = { "c1": "#000000", "c2": "#000000", "c3": "#000000" };
-let colorIndicator = document.getElementById('color-indicator');
+var colorIndicator = document.getElementById('color-indicator');
 var colorPicker = new iro.ColorPicker("#color-picker", {
   width: 180, color: '#fff',
   layout: [{
@@ -37,14 +40,19 @@ function loadPreset() {
   }
 }
 loadPreset();
+slider.onchange = function () {
+  b = this.value;
+  posting();
+  console.log(b);
+};
 
 colorPicker.on("color:change", function (color) {
   colorIndicator.style.backgroundColor = color.hexString;
 });
-console.log(json);
 colorPicker.on("input:end", function (input) {
-  posting(input.rgb);
-  let rgb = colorPicker.color.rgb;
+  c = input.rgb;
+  posting();
+  /*let rgb = colorPicker.color.rgb;*/
   if (lastC !== null) {
     d.getElementById(lastC).style.backgroundColor = input.hexString;
     color_storage[lastC] = input.hexString;
@@ -55,10 +63,10 @@ colorPicker.on("input:end", function (input) {
 
   }
 });
-function posting(arg) {
-  console.log("Es wird gefetched:",arg, typeof(arg));
-  let x = null;
-  requestJSON(arg);
+function posting() {
+  data = {c, f, b};
+  console.log(data);
+  requestJSON(data);
 }
 /* Funktion um JSON zu übermitteln */
 function requestJSON(arg) {
@@ -67,16 +75,9 @@ function requestJSON(arg) {
     method: 'post',
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json'
     },
     body: JSON.stringify(arg)
-  }).then(response => response.json())
-    .then(data => {
-      console.log(res);
-    })
-    .catch((error) => {
-      console.error("Error", error);
-    });
+  })
 
 }
 
@@ -95,8 +96,10 @@ function toggleTheme() {
   console.log(theme);
 }
 var last = null;
-function selectButton(button) {
-  console.log(last);
+function selectButton(button, number) {
+  console.log(button);
+  f = number;
+  posting();
   if (last !== null) {
     d.getElementById(last).className = "inactive";
   }

@@ -136,6 +136,7 @@ void scanSlave()
   }
   //Serial.println(slave_array[i]);
 }
+uint8_t brightness = 0;
 void handleJSON()
 {
   String data = server.arg("plain");
@@ -147,5 +148,11 @@ void handleJSON()
     Serial.println("Error");
     Serial.println(error.c_str());
   }
-  server.send(200, "Daten Empfangen");
+  JsonObject obj = doc.as<JsonObject>();
+  uint8_t r = obj["r"];
+  brightness = obj["b"];
+  Serial.println(brightness);
+  Serial.print("Rot ist  ");
+  Serial.println(r);
+  server.send(204, "Daten Empfangen");
 }
