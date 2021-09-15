@@ -35,13 +35,13 @@ LedStates states(strip);
 String slave;
 String newslave;
 files file;
+vector<String> commands;
 vector<String> slaves_list;
 uint8_t slaves_count = 0;
 void wifiSetup();
 void scanSlave();
 void handleLed();
 void handleJSON();
-void createcommands();
 void handleRoot()
 {
   server.send(200, "text/html", file.get_html());
@@ -137,10 +137,6 @@ void scanSlave()
   }
   //Serial.println(slave_array[i]);
 }
-void createcommands(String command, JsonObject obje)
-{
-  if (command == "b") Serial.print("b");
-}
 uint8_t brightness = 0;
 void handleJSON()
 {
@@ -156,14 +152,12 @@ void handleJSON()
   JsonObject obj = doc.as<JsonObject>();
   uint8_t r = obj["r"];
   brightness = obj["b"];
-  vector<String> commands;
-  for (JsonPair kv : obj)
-  {
+  for (JsonPair kv : obj) {
     Serial.println(kv.key().c_str());
     commands.push_back(kv.key().c_str());
-    createcommands(kv.key().c_str(), obj);
     //Serial.println(kv.value().as<char*>());
-  }
-  //createcommands(commands);
+}
+  //Serial.println(brightness);
+
   server.send(204, "Daten Empfangen");
 }
