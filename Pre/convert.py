@@ -2,16 +2,16 @@ import os
 import codecs
 
 def read_file(path, file):
-    with codecs.open(os.path.join(path, file), "r", encoding="utf-8") as f:  # Read the file with UTF-8 encoding
+    with codecs.open(os.path.join(path, file), "r", encoding="utf-8") as f:         # Read the file with UTF-8 encoding
         content = str(f.read().replace('"', "'")).splitlines()
-        content_list = [i.strip() for i in content]                          # Create list that doesnt have spare Whitespaces in Strings
+        content_list = [i.strip() for i in content]                                 # Create list that doesnt have spare Whitespaces in Strings
         f.close()
-    return  content_list
+    return  [i.strip() for i in content]
                                       
-def cut_html(html, css_list, js_list): # Function to split html
+def cut_html(html, css_list, js_list):                                              # Function to split html
     for i, line in enumerate(html):
-        if line == "</head>":                                                # Find place to cut
-            c = i
+        if line == "</head>":                                                       # Find place to cut
+            c = i  
             break
     return ["".join(html[3:c-len(css_list)])], ["".join(html[c+3:-2-len(js_list)])] # Head and body
 
@@ -35,8 +35,8 @@ def write_h(path, file, html):                                                  
         f.writelines(h_file)
         f.close()
 
-def run(source, dest, name, css_list, js_list):                            # Runs script
-    html = read_file(source, "index.html")
+def run(source, dest, name, html, css_list, js_list):                               # Runs script
+    html = read_file(source, html)
     css = [read_file(source, c) for c in css_list]
     js = [read_file(source, j) for j in js_list]
     head, body = cut_html(html, css_list, js_list)
@@ -44,12 +44,14 @@ def run(source, dest, name, css_list, js_list):                            # Run
     write_h(dest, name, file)
 
 if __name__ == "__main__":
-    css_list =[ "colorpicker.css",  "nav.css", "slider.css", "main.css"]         # List with all CSS filenames
-    js_list = [ "logic.js"]                                                      # List with all JS filenames
+    
+    html = "index.html"
+    css_list =[ "colorpicker.css",  "nav.css", "slider.css", "main.css"]            # List with all CSS filenames
+    js_list = [ "logic.js"]                                                         # List with all JS filenames
     source = "After"
     destination = "NodeMCU/src"
     name = "text.h"
-    run(source, destination, name, css_list, js_list)
+    run(source, destination, name, html, css_list, js_list)
 
 
 

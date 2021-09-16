@@ -139,7 +139,8 @@ void scanSlave()
 }
 void createcommands(String command, JsonObject obje)
 {
-  if (command == "b") Serial.print("b");
+  if (command == "b")
+    Serial.print("b");
 }
 uint8_t brightness = 0;
 void handleJSON()
@@ -164,9 +165,10 @@ void handleJSON()
     key = kv.key().c_str();
     Serial.println(key);
     commands.push_back(kv.key().c_str());
-    if (key =="b") [
+    if (key == "b")
+    {
       b = obj[key];
-    ]
+    }
     Serial.println(b);
     //createcommands(kv.key().c_str(), obj);
     //Serial.println(kv.value().as<char*>());
