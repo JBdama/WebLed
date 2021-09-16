@@ -157,11 +157,18 @@ void handleJSON()
   uint8_t r = obj["r"];
   brightness = obj["b"];
   vector<String> commands;
+  String key;
+  int b;
   for (JsonPair kv : obj)
   {
-    Serial.println(kv.key().c_str());
+    key = kv.key().c_str();
+    Serial.println(key);
     commands.push_back(kv.key().c_str());
-    createcommands(kv.key().c_str(), obj);
+    if (key =="b") [
+      b = obj[key];
+    ]
+    Serial.println(b);
+    //createcommands(kv.key().c_str(), obj);
     //Serial.println(kv.value().as<char*>());
   }
   //createcommands(commands);
