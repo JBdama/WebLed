@@ -41,9 +41,8 @@ function loadPreset() {
 }
 loadPreset();
 slider.onchange = function () {
-  b = this.value;
-  posting();
-  console.log(b);
+  b = {"b":parseInt(this.value)};
+  posting(b);
 };
 
 colorPicker.on("color:change", function (color) {
@@ -51,7 +50,7 @@ colorPicker.on("color:change", function (color) {
 });
 colorPicker.on("input:end", function (input) {
   c = input.rgb;
-  posting();
+  posting({"c":c});
   /*let rgb = colorPicker.color.rgb;*/
   if (lastC !== null) {
     d.getElementById(lastC).style.backgroundColor = input.hexString;
@@ -63,10 +62,9 @@ colorPicker.on("input:end", function (input) {
 
   }
 });
-function posting() {
-  data = {c, f, b};
-  console.log(data);
-  requestJSON(data);
+function posting(arg) {
+  console.log("Fetch", arg);
+  /*requestJSON(arg);*/
 }
 /* Funktion um JSON zu übermitteln */
 function requestJSON(arg) {
@@ -85,21 +83,24 @@ function sCol(na, col) {
   d.documentElement.style.setProperty(na, col);
 }
 
-
-
 function toggleSync() {
   sync = !sync;
   d.getElementById('buttonSync').className = (sync) ? "active" : "";
+  posting({"s":sync});
+}
+function togglePower() {
+  isOn = !isOn;
+  d.getElementById('buttonPower').className = (isOn) ? "active" : "";
+  posting({"p":isOn});
 }
 function toggleTheme() {
   theme = !theme;
   console.log(theme);
 }
 var last = null;
+
 function selectButton(button, number) {
-  console.log(button);
-  f = number;
-  posting();
+  posting({"f":number});
   if (last !== null) {
     d.getElementById(last).className = "inactive";
   }
@@ -111,18 +112,16 @@ function defColor(arg) {
   var color2 = {r:0, g:0, b:0};
   var rgb = ["r", "g", "b"];
 
-  console.log(arg);
   let col = d.getElementById(arg).style.backgroundColor;
   /*console.log(`Color ist ${col}`); */
   let newcol = col.slice(4, -1);
   newcol = newcol.split(",");
   for (let x in newcol) color2[rgb[x]] = parseInt(newcol[x]);
-  posting(color2);
+  posting({"c":color2});
   colorPicker.color.set(col);
 
   if (lastC == arg) {
     d.getElementById(arg).className = "inactive";
-    console.log(";(");
     lastC = null;
     return;
   }
