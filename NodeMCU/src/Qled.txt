@@ -14,7 +14,7 @@
 #include "SimpleFunction.h"
 #include "SimpleFunction_2.h"
 #include "SimpleFunction_3.h"
-using namespace std;
+using namespace std
 bool ledState = true;
 const int LED_PIN = D4;
 const int LED_COUNT = 8;

@@ -1,3 +1,4 @@
+/*
 #include "WebSocketsServer.h"
 class websocket_help
 {
@@ -31,4 +32,5 @@ public:
     case WStype_TEXT:
     }
   }
-}
+};
+*/
