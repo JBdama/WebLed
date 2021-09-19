@@ -5,9 +5,10 @@ var theme = true;
 var d = document;
 var lastC = null;
 var json = null;
-var c = {r:0,g:0,b:0};
+var c = { r: 0, g: 0, b: 0 };
 var b = 120;
 var f = 0;
+
 var color_storage = { "c1": "#000000", "c2": "#000000", "c3": "#000000" };
 var colorIndicator = document.getElementById('color-indicator');
 var colorPicker = new iro.ColorPicker("#color-picker", {
@@ -29,19 +30,20 @@ var colorPicker = new iro.ColorPicker("#color-picker", {
     }
   }]
 });
+
 function loadPreset() {
   if (localStorage.getItem('color') !== null) {
     var color_stor = JSON.parse(localStorage.getItem('color'));
     for (let i in color_stor) {
       d.getElementById(i).style.backgroundColor = color_stor[i];
       console.log("Es geht", color_stor[i]);
-      color_storage[i]  = color_stor[i];
+      color_storage[i] = color_stor[i];
     }
   }
 }
 loadPreset();
 slider.onchange = function () {
-  b = {"b":parseInt(this.value)};
+  b = { "b": parseInt(this.value) };
   posting(b);
 };
 
@@ -50,7 +52,7 @@ colorPicker.on("color:change", function (color) {
 });
 colorPicker.on("input:end", function (input) {
   c = input.rgb;
-  posting({"c":c});
+  posting({ "c": c });
   /*let rgb = colorPicker.color.rgb;*/
   if (lastC !== null) {
     d.getElementById(lastC).style.backgroundColor = input.hexString;
@@ -86,12 +88,12 @@ function sCol(na, col) {
 function toggleSync() {
   sync = !sync;
   d.getElementById('buttonSync').className = (sync) ? "active" : "";
-  posting({"s":sync});
+  posting({ "s": sync });
 }
 function togglePower() {
   isOn = !isOn;
   d.getElementById('buttonPower').className = (isOn) ? "active" : "";
-  posting({"p":isOn});
+  posting({ "p": isOn });
 }
 function toggleTheme() {
   theme = !theme;
@@ -100,7 +102,7 @@ function toggleTheme() {
 var last = null;
 
 function selectButton(button, number) {
-  posting({"f":number});
+  posting({ "f": number });
   if (last !== null) {
     d.getElementById(last).className = "inactive";
   }
@@ -109,7 +111,7 @@ function selectButton(button, number) {
 
 }
 function defColor(arg) {
-  var color2 = {r:0, g:0, b:0};
+  var color2 = { r: 0, g: 0, b: 0 };
   var rgb = ["r", "g", "b"];
 
   let col = d.getElementById(arg).style.backgroundColor;
@@ -117,7 +119,7 @@ function defColor(arg) {
   let newcol = col.slice(4, -1);
   newcol = newcol.split(",");
   for (let x in newcol) color2[rgb[x]] = parseInt(newcol[x]);
-  posting({"c":color2});
+  posting({ "c": color2 });
   colorPicker.color.set(col);
 
   if (lastC == arg) {

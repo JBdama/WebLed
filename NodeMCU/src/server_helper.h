@@ -5,30 +5,34 @@
 #include <vector>
 #include <bits/stdc++.h>
 //#include "SimpleFunction_3.h"
-
+#include "text.h"
 bool ledState = false;
+//files file;
 AsyncWebServer server(80);
 AsyncWebSocket wSocket("/ws");
 //void handleWebSocketMessage();
+
 void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
+{
+  AwsFrameInfo *info = (AwsFrameInfo *)arg;
+  if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT)
   {
-    AwsFrameInfo *info = (AwsFrameInfo *)arg;
-    if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT)
+    data[len] = 0;
+    Serial.println("");
+    Serial.println((char *)data);
+    if (strcmp((char *)data, "toggle") == 0)
     {
-      data[len] = 0;
-      Serial.println("");
-      Serial.println((char *)data);
-      if (strcmp((char *)data, "toggle") == 0)
+      ledState = !ledState;
+      Serial.println("Hello World!");
+      if (ledState)
       {
-        ledState = !ledState;
-        Serial.println("Hello World!");
-        if (ledState){}
-          //toggleAnim();
-        //else
-          //toggleDown();
       }
+      //toggleAnim();
+      //else
+      //toggleDown();
     }
   }
+}
 void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
              void *arg, uint8_t *data, size_t len)
 {
@@ -84,7 +88,7 @@ public:
       wSocket.textAll(mes);
     }
   }
-/*
+  /*
   void checkFadeAndSetLedFunction(LedFunction *f)
   {
     f->init();
@@ -104,7 +108,6 @@ public:
     checkFadeAndSetLedFunction(f);
   }
   */
-  
 
   void startWifi()
   {
@@ -117,13 +120,18 @@ public:
       Serial.print(".");
     }
     Serial.print("Connected, IP address: ");
-    Serial.println( WiFi.localIP());
-  } 
+    Serial.println(WiFi.localIP());
+  }
   void startWebSocket()
   {
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send(200, "text/plain", "test"); });
-    wSocket.onEvent(onEvent);
+              { request->send(200, "text/html", message_html2); });
+              
+    server.on("/icon.css", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(200, "stylesheet/css", message_css2); }); 
+    server.on("/rain.css", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(200, "stylesheet/css", message_css); }); 
+        wSocket.onEvent(onEvent);
 
     server.addHandler(&wSocket);
     server.begin();
@@ -160,5 +168,9 @@ public:
         slaves_list.push_back(MDNS.IP(i).toString());
       }
     }
+  }
+  void loop()
+  {
+    wSocket.cleanupClients();
   }
 };
