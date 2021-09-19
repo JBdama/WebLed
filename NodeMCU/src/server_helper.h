@@ -6,10 +6,29 @@
 #include <bits/stdc++.h>
 //#include "SimpleFunction_3.h"
 
-
+bool ledState = false;
 AsyncWebServer server(80);
 AsyncWebSocket wSocket("/ws");
 //void handleWebSocketMessage();
+void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
+  {
+    AwsFrameInfo *info = (AwsFrameInfo *)arg;
+    if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT)
+    {
+      data[len] = 0;
+      Serial.println("");
+      Serial.println((char *)data);
+      if (strcmp((char *)data, "toggle") == 0)
+      {
+        ledState = !ledState;
+        Serial.println("Hello World!");
+        if (ledState){}
+          //toggleAnim();
+        //else
+          //toggleDown();
+      }
+    }
+  }
 void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
              void *arg, uint8_t *data, size_t len)
 {
@@ -85,25 +104,7 @@ public:
     checkFadeAndSetLedFunction(f);
   }
   */
-  void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
-  {
-    AwsFrameInfo *info = (AwsFrameInfo *)arg;
-    if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT)
-    {
-      data[len] = 0;
-      Serial.println("");
-      Serial.println((char *)data);
-      if (strcmp((char *)data, "toggle") == 0)
-      {
-        ledState = !ledState;
-        Serial.println("Hello World!");
-        if (ledState){}
-          //toggleAnim();
-        //else
-          //toggleDown();
-      }
-    }
-  }
+  
 
   void startWifi()
   {
@@ -116,8 +117,8 @@ public:
       Serial.print(".");
     }
     Serial.print("Connected, IP address: ");
-    Serial.println(WiFi.localIP());
-  }
+    Serial.println( WiFi.localIP());
+  } 
   void startWebSocket()
   {
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
