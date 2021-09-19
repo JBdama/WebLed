@@ -36,7 +36,6 @@ class SimpleFunction_3: public LedFunction
 
     virtual void render()
     {
-      Serial.println(mode);
       delay(10);
       int j = ((millis() - start) / 63) & 255;
       int k = ((millis() - start) / 71) & 255;
