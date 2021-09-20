@@ -1,14 +1,16 @@
-var slider = document.getElementById("sliderBri");
 var isOn = true;
 var sync = true;
 var theme = true;
 var d = document;
+var last = null;
 var lastC = null;
 var json = null;
 var c = { r: 0, g: 0, b: 0 };
 var b = 120;
 var f = 0;
-
+var gateway = `ws://${window.location.hostname}/ws`;
+var websocket;
+var slider = d.getElementById("sliderBri");
 var color_storage = { "c1": "#000000", "c2": "#000000", "c3": "#000000" };
 var colorIndicator = document.getElementById('color-indicator');
 var colorPicker = new iro.ColorPicker("#color-picker", {
@@ -30,7 +32,43 @@ var colorPicker = new iro.ColorPicker("#color-picker", {
     }
   }]
 });
+function initWebSocket() {
+  console.log('Trying to open a WebSocket connection...');
+  websocket = new WebSocket(gateway);
+  websocket.onopen = onOpen;
+  websocket.onclose = onClose;
+  websocket.onmessage = onMessage; // <-- add this line
+}
+function onOpen(event) {
+  console.log('Connection opened');
+}
 
+function onClose(event) {
+  console.log('Connection closed');
+  setTimeout(initWebSocket, 2000);
+}
+function onMessage(event) {
+  var state;
+  if (event.data == "1") {
+    state = "ON";
+  }
+  else {
+    state = "OFF";
+  }
+  console.log("State", state);
+}
+window.addEventListener('load', onLoad);
+function onLoad(event) {
+  initWebSocket();
+  initButton();
+}
+
+function initButton() {
+  console.log("Button")
+}
+function toggle() {
+  websocket.send('toggle');
+}
 function loadPreset() {
   if (localStorage.getItem('color') !== null) {
     var color_stor = JSON.parse(localStorage.getItem('color'));
@@ -99,7 +137,6 @@ function toggleTheme() {
   theme = !theme;
   console.log(theme);
 }
-var last = null;
 
 function selectButton(button, number) {
   posting({ "f": number });

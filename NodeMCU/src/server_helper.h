@@ -27,9 +27,6 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
       if (ledState)
       {
       }
-      //toggleAnim();
-      //else
-      //toggleDown();
     }
   }
 }
