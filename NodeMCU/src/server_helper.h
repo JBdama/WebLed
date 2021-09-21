@@ -24,16 +24,60 @@ std::vector<String> slaves_list;
 const char *ssid = "Devolo";
 const char *password = "62122607890816550026";
 bool ledState = false;
+void start_up() {
+  mager.setup();
+}
+void choose_command(JsonObject dataa) {        
+        for (JsonPair kv : dataa)
+        {
+            const char *key = kv.key().c_str();
+            Serial.println(key);
+            if (strcmp(key, "b") == 0)
+            {
+                mager.b = obj[key];
+                states.set_brs(mager.b);
+                Serial.println(states.brs);
+            }
+            if (strcmp(key, "c") == 0)
+            {
+                mager.rgb[0] = obj[key]["r"];
+                mager.rgb[1] = obj[key]["g"];
+                mager.rgb[2] = obj[key]["b"];
+                Serial.println("color");
+                Serial.println(mager.rgb[0]);
+                Serial.println(mager.rgb[1]);
+                Serial.println(mager.rgb[2]);
+                mager.updateLeds();
+            }
+            if (strcmp(key, "m") == 0)
+            {
+                mgaer.m = obj[key];
+                mager.updateLeds();
+            }
+            if (strcmp(key, "p") == 0)
+            {
+                mager.power = obj[key];
+                mager.fade_power(power);
+            }
+        }
+}
 void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
 {
   AwsFrameInfo *info = (AwsFrameInfo *)arg;
   if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT)
   {
-    Serial.println("");
-    //Serial.println((char *)data);
     String fetch = (char *)data;
-    Serial.println(fetch);
-    mager.comm(fetch);
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, data);
+      if (error)
+      {
+          Serial.println("Error");
+          Serial.println(error.c_str());
+      }
+      JsonObject obj = doc.as<JsonObject>();
+      
+      Serial.println(fetch);
+      choose_command(obj);
   }
 }
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,

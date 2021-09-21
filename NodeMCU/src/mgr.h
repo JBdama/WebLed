@@ -15,6 +15,16 @@ public:
     mgr(LedStates &l) : states(l)
     {
     }
+    void setup() {
+        SimpleFunction *f = new SimpleFunction;
+        f->getRGB(0, 0, 0);
+        f->init();
+        SimpleFunction *g = new SimpleFunction;
+        g->getRGB(0, 0, 0);
+        g->init();
+        s
+
+    }
     void initLeds(LedFunction *f)
     {
         f->getRGB(rgb[0], rgb[1], rgb[2]);
@@ -33,50 +43,6 @@ public:
         {
             SimpleFunction_2 *f = new SimpleFunction_2;
             initLeds(f);
-        }
-    }
-    void comm(String json)
-    {
-        StaticJsonDocument<200> doc;
-        DeserializationError error = deserializeJson(doc, json);
-        if (error)
-        {
-            Serial.println("Error");
-            Serial.println(error.c_str());
-        }
-        JsonObject obj = doc.as<JsonObject>();
-        
-        for (JsonPair kv : obj)
-        {
-            const char *key = kv.key().c_str();
-            Serial.println(key);
-            if (strcmp(key, "b") == 0)
-            {
-                b = obj[key];
-                states.set_brs(b);
-                Serial.println(states.brs);
-            }
-            if (strcmp(key, "c") == 0)
-            {
-                rgb[0] = obj[key]["r"];
-                rgb[1] = obj[key]["g"];
-                rgb[2] = obj[key]["b"];
-                Serial.println("color");
-                Serial.println(rgb[0]);
-                Serial.println(rgb[1]);
-                Serial.println(rgb[2]);
-                updateLeds();
-            }
-            if (strcmp(key, "m") == 0)
-            {
-                m = obj[key];
-                updateLeds();
-            }
-            if (strcmp(key, "p") == 0)
-            {
-                power = obj[key];
-                fade_power(power);
-            }
         }
     }
     void fade_power(bool state)
