@@ -15,14 +15,13 @@ public:
     mgr(LedStates &l) : states(l)
     {
     }
-    void setup() {
+    void setup_mgr() {
         SimpleFunction *f = new SimpleFunction;
         f->getRGB(0, 0, 0);
         f->init();
         SimpleFunction *g = new SimpleFunction;
         g->getRGB(0, 0, 0);
         g->init();
-        s
 
     }
     void initLeds(LedFunction *f)

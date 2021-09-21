@@ -6,11 +6,11 @@
 #include <bits/stdc++.h>
 #include <ArduinoJson.h>
 #include "LedStates.h"
-#include <Adafruit_NeoPixel.h>
 
 //#include "SimpleFunction_3.h"
 #include "mgr.h"
 #include "text.h"
+#include "liveview.h"
 const int LED_PIN = D4;
 const int LED_COUNT = 8;
 
@@ -21,11 +21,12 @@ LedStates states(strip);
 mgr mager(states);
 
 std::vector<String> slaves_list;
+bool lv = false;
 const char *ssid = "Devolo";
 const char *password = "62122607890816550026";
 bool ledState = false;
 void start_up() {
-  mager.setup();
+  mager.setup_mgr();
 }
 void choose_command(JsonObject dataa) {        
         for (JsonPair kv : dataa)
@@ -34,15 +35,15 @@ void choose_command(JsonObject dataa) {
             Serial.println(key);
             if (strcmp(key, "b") == 0)
             {
-                mager.b = obj[key];
+                mager.b = dataa[key];
                 states.set_brs(mager.b);
                 Serial.println(states.brs);
             }
             if (strcmp(key, "c") == 0)
             {
-                mager.rgb[0] = obj[key]["r"];
-                mager.rgb[1] = obj[key]["g"];
-                mager.rgb[2] = obj[key]["b"];
+                mager.rgb[0] = dataa[key]["r"];
+                mager.rgb[1] = dataa[key]["g"];
+                mager.rgb[2] = dataa[key]["b"];
                 Serial.println("color");
                 Serial.println(mager.rgb[0]);
                 Serial.println(mager.rgb[1]);
@@ -51,13 +52,16 @@ void choose_command(JsonObject dataa) {
             }
             if (strcmp(key, "m") == 0)
             {
-                mgaer.m = obj[key];
+                mager.m = dataa[key];
                 mager.updateLeds();
             }
             if (strcmp(key, "p") == 0)
             {
-                mager.power = obj[key];
-                mager.fade_power(power);
+                mager.power = dataa[key];
+                mager.fade_power(mager.power);
+            }
+            if (strcmp(key, "lv") == 0) {
+              lv = !lv;
             }
         }
 }
@@ -172,6 +176,8 @@ void startWebSocket()
             { request->send(200, "stylesheet/css", message_css2); });
   server.on("/rain.css", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "stylesheet/css", message_css); });
+  server.on("/liveview", HTTP_GET, [](AsyncWebServerRequest *request) 
+            { request->send(200, "text/plain", message_lv);});
   wSocket.onEvent(onWsEvent);
 
   server.addHandler(&wSocket);

@@ -1,6 +1,7 @@
 var isOn = true;
 var sync = true;
 var theme = true;
+var liveview = false;
 var d = document;
 var last = null;
 var lastC = null;
@@ -127,7 +128,15 @@ function requestJSON(arg) {
 function sCol(na, col) {
   d.documentElement.style.setProperty(na, col);
 }
+function toggleLiveview() { 
+  liveview = !liveview;
+  d.getElementById("liveview").style.display = (liveview) ? "block" : "none";
+  var url = `http://192.178.168.40/liveview`;
+  d.getElementById('liveview').src = (liveview) ? url:"about:blank";
+  d.getElementById("buttonLv").className = (liveview) ? "active":"";
+  if (!liveview && ws && ws.readyState === WebSocket.OPEN) ws.send(`{'lv':false}`); 
 
+}
 function toggleSync() {
   sync = !sync;
   d.getElementById('buttonSync').className = (sync) ? "active" : "";
