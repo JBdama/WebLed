@@ -16,7 +16,9 @@ class LedStates
 public:
   uint8_t values[MAX_LED_COUNT][3] = {{0}};
   uint8_t values_to[MAX_LED_COUNT][3] = {{0}};
+  int r, g, b;
   int count = 0;
+  float brs = 0;
   int duration = 2000;
   long StartTime = 0;
   bool active = false;
@@ -29,6 +31,10 @@ public:
       : pixels(ledPixels)
   {
     count = pixels.numPixels();
+    pixels.begin();
+  }
+  void set_brs(uint8_t b)  {
+    brs = (float)b/(float)255;
   }
   void loope()
   {
@@ -77,7 +83,10 @@ public:
   {
     for (int i = 0; i < count; i++)
     {
-      pixels.setPixelColor(i, pixels.Color((f0 * values[i][0] + f1 * values_to[i][0]) >> 16, (f0 * values[i][1] + f1 * values_to[i][1]) >> 16, (f0 * values[i][2] + f1 * values_to[i][2]) >> 16));
+      r = ((f0 * values[i][0] + f1 * values_to[i][0]) >> 16)*brs;
+      g = ((f0 * values[i][1] + f1 * values_to[i][1]) >> 16)*brs;
+      b = ((f0 * values[i][2] + f1 * values_to[i][2]) >> 16)*brs;
+      pixels.setPixelColor(i, pixels.Color(r, g, b));
       //pixels.setPixelColor(i, pixels.Color(100, 100, 100));
       Serial.print(i);
       Serial.print("Werte von current: ");
@@ -143,15 +152,15 @@ public:
   {
     for (int i = 0; i < count; i++)
     {
-      pixels.setPixelColor(i, pixels.Color(values[i][0], values[i][1], values[i][2]));
+      pixels.setPixelColor(i, pixels.Color(int(values[i][0]*brs), int(values[i][1]*brs), int(values[i][2])*brs));
       /*
           Serial.print(i);
           Serial.print(" Rot ist ");
-          Serial.print(values[i][0]);
+          Serial.print(values[i][0]*brs);
           Serial.print(" Grün ist " );
-          Serial.print(values[i][1]);
+          Serial.print(values[i][1]*brs);
           Serial.print(" Blau ist ");
-          Serial.println(values[i][2]);
+          Serial.println(values[i][2]*brs);
         */
     }
     pixels.show();

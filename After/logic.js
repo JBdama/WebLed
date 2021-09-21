@@ -37,7 +37,7 @@ function initWebSocket() {
   websocket = new WebSocket(gateway);
   websocket.onopen = onOpen;
   websocket.onclose = onClose;
-  websocket.onmessage = onMessage; // <-- add this line
+  websocket.onmessage = onMessage; /* <-- add this line*/
 }
 function onOpen(event) {
   console.log('Connection opened');
@@ -64,7 +64,7 @@ function onLoad(event) {
 }
 
 function initButton() {
-  console.log("Button")
+  console.log("Button");
 }
 function toggle() {
   websocket.send('toggle');
@@ -81,7 +81,8 @@ function loadPreset() {
 }
 loadPreset();
 slider.onchange = function () {
-  b = { "b": parseInt(this.value) };
+  var value = this.value;
+  var b = "{ b:"+ this.value +' }';
   posting(b);
 };
 
@@ -90,7 +91,8 @@ colorPicker.on("color:change", function (color) {
 });
 colorPicker.on("input:end", function (input) {
   c = input.rgb;
-  posting({ "c": c });
+  console.log(JSON.stringify(c), c);
+  posting("{ c:"+ JSON.stringify(c)+" }");
   /*let rgb = colorPicker.color.rgb;*/
   if (lastC !== null) {
     d.getElementById(lastC).style.backgroundColor = input.hexString;
@@ -104,6 +106,9 @@ colorPicker.on("input:end", function (input) {
 });
 function posting(arg) {
   console.log("Fetch", arg);
+  websocket.send(arg);
+  /*websocket.send(["Text1", "Text2"]);*/
+
   /*requestJSON(arg);*/
 }
 /* Funktion um JSON zu übermitteln */
@@ -138,14 +143,15 @@ function toggleTheme() {
   console.log(theme);
 }
 
-function selectButton(button, number) {
-  posting({ "f": number });
+function selectButton(number) {
+  posting('{ m:' +number+' }');
+  /*
   if (last !== null) {
     d.getElementById(last).className = "inactive";
   }
   d.getElementById(button).className = "active";
   last = button;
-
+  */
 }
 function defColor(arg) {
   var color2 = { r: 0, g: 0, b: 0 };
