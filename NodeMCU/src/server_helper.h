@@ -5,6 +5,9 @@
 #include <vector>
 #include <bits/stdc++.h>
 #include <ArduinoJson.h>
+#include "LedStates.h"
+#include <Adafruit_NeoPixel.h>
+
 //#include "SimpleFunction_3.h"
 #include "mgr.h"
 #include "text.h"
@@ -165,5 +168,6 @@ void scanSlave()
 }
 void loopen()
 {
+    states.loope();
   wSocket.cleanupClients();
 }

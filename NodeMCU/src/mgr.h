@@ -7,6 +7,7 @@
 class mgr
 {
 public:
+    bool power = true;
     uint8_t rgb[3] = {0, 0, 0};
     uint8_t b = 100;
     uint8_t m = 1;
@@ -21,7 +22,7 @@ public:
         states.setFunction(f);
         states.fader_start();
     }
-    void setLeds()
+    void updateLeds()
     {
         if (m == 0)
         {
@@ -44,8 +45,7 @@ public:
             Serial.println(error.c_str());
         }
         JsonObject obj = doc.as<JsonObject>();
-        //String key;
-        uint8_t b;
+        
         for (JsonPair kv : obj)
         {
             const char *key = kv.key().c_str();
@@ -65,13 +65,33 @@ public:
                 Serial.println(rgb[0]);
                 Serial.println(rgb[1]);
                 Serial.println(rgb[2]);
-                setLeds();
+                updateLeds();
             }
             if (strcmp(key, "m") == 0)
             {
                 m = obj[key];
-                setLeds();
+                updateLeds();
             }
+            if (strcmp(key, "p") == 0)
+            {
+                power = obj[key];
+                fade_power(power);
+            }
+        }
+    }
+    void fade_power(bool state)
+    {
+        if (state)             //fade from 0 to 1
+        {
+            updateLeds();
+        }
+        else            //frade from 1 to 0
+        {
+            SimpleFunction *f = new SimpleFunction;
+            f->getRGB(0, 0, 0);
+            f->init();
+            states.setFunction(f);
+            states.fader_start();
         }
     }
 };
