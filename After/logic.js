@@ -131,10 +131,10 @@ function sCol(na, col) {
 function toggleLiveview() { 
   liveview = !liveview;
   d.getElementById("liveview").style.display = (liveview) ? "block" : "none";
-  var url = `http://192.178.168.40/liveview`;
+  var url = `http://192.168.178.25/liveview`;
   d.getElementById('liveview').src = (liveview) ? url:"about:blank";
   d.getElementById("buttonLv").className = (liveview) ? "active":"";
-  if (!liveview && ws && ws.readyState === WebSocket.OPEN) ws.send(`{'lv':false}`); 
+  if (!liveview && websocket && websocket.readyState === WebSocket.OPEN) websocket.send(`{'lv':false}`); 
 
 }
 function toggleSync() {

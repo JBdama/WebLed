@@ -9,7 +9,23 @@
 
 #include "LedFunction.h"
 #include <math.h>
-class SimpleFunction_2: public LedFunction
+class extraFunc : public LedFunction {
+  public:
+  long start;
+  long end;
+  bool mode = false;
+  extraFunc() {
+    start = millis();
+  }
+  virtual void modes() {
+    mode = true; 
+  }
+  virtual void render() {
+    end = millis()-start;
+    if (end%1000==0) {}
+  }
+};
+class waveFunction: public LedFunction
 {
   public:
     int a = 5;
@@ -19,7 +35,7 @@ class SimpleFunction_2: public LedFunction
     bool set = false;
     bool mode = false;
 
-    SimpleFunction_2()
+    waveFunction()
     {
       for (int i = 0; i < 256; i++)
         sinTab[i] = sin(3.1415 / 128 * i) * 0x7fff + 0x8000;

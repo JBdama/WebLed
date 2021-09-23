@@ -24,30 +24,35 @@
 <body>
     <div id="canv" />
     <script>
-        function updatePreview() {
-            var str = "linear-gradient(90deg,#ff0000,#00ff00,#0000f";
+        function updatePreview(leds) {
+            var str = "linear-gradient(90deg,#ff0000,#00ff00,#0000ff)";
             document.getElementById("canv").style.background = str;
         }
         function getLiveJson(event) {
             try {
                 var json = JSON.parse(event.data);
+                if (json && json.leds) {
+                    requestAnimationFrame(function () {updatePreview(json.leds);});
+                }
             }
             catch (err) {
                 console.error("Live Preview Error: ", error)
             }
         }
-        var ws = top.windows.ws;
-        if (ws && ws.readyState === WebSocket.OPEN) {
+
+        var websocket = top.window.websocket;
+        if (websocket && websocket.readyState === WebSocket.OPEN) {
             console.info("Using WebSocket");
         } else {
             console.info("Peek WS Opening");
-            ws = new WebSocket("ws://192.168.178.40/ws");
-            ws.onopen = function () {
+            websocket = new WebSocket("ws://192.168.178.40/ws");
+            websocket.onopen = function () {
                 console.info("Peek Ws Opened");
-                ws.send("{lv: true}");
+                websocket.send("{lv: true}");
             }
         }
-        ws.addEventListener("message", getLiveJson);
+    
+        websocket.addEventListener("message", getLiveJson);
         var str = "linear-gradient(90deg,#ff0000,#00ff00,#0000f)";
             document.getElementById("canv").style.background = str;
     </script>

@@ -1,6 +1,6 @@
 #include <ArduinoJson.h>
 #include "LedFunction.h"
-#include "SimpleFunction_2.h"
+#include "waveFunction.h"
 #include "SimpleFunction.h"
 
 //#include "LedStates.h"
@@ -22,7 +22,9 @@ public:
         SimpleFunction *g = new SimpleFunction;
         g->getRGB(0, 0, 0);
         g->init();
-
+        states.setFunction(f);
+        states.setFunction(g);
+        states.fader_start();
     }
     void initLeds(LedFunction *f)
     {
@@ -40,8 +42,10 @@ public:
         }
         else if (m == 1)
         {
-            SimpleFunction_2 *f = new SimpleFunction_2;
+            waveFunction *f = new waveFunction;
             initLeds(f);
+        } else if (m == 2) {
+            
         }
     }
     void fade_power(bool state)

@@ -6,8 +6,6 @@
 #include <bits/stdc++.h>
 #include <ArduinoJson.h>
 #include "LedStates.h"
-
-//#include "SimpleFunction_3.h"
 #include "mgr.h"
 #include "text.h"
 #include "liveview.h"
@@ -19,7 +17,8 @@ AsyncWebSocket wSocket("/ws");
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 LedStates states(strip);
 mgr mager(states);
-
+std::stringstream ss;
+std::string ss2;
 std::vector<String> slaves_list;
 bool lv = false;
 const char *ssid = "Devolo";
@@ -177,7 +176,7 @@ void startWebSocket()
   server.on("/rain.css", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "stylesheet/css", message_css); });
   server.on("/liveview", HTTP_GET, [](AsyncWebServerRequest *request) 
-            { request->send(200, "text/plain", message_lv);});
+            { request->send(200, "text/html", message_lv);});
   wSocket.onEvent(onWsEvent);
 
   server.addHandler(&wSocket);
@@ -219,5 +218,13 @@ void scanSlave()
 void loopen()
 {
     states.loope();
+      if (lv) {
+        ss2 = "";
+        for (int i=0; i<states.count;i++)
+          for (int j=0;j<3;j++) {
+            ss << std::hex << states.fRgb[j];
+            ss2 += ss.str();
+          }
+      }
   wSocket.cleanupClients();
 }
