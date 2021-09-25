@@ -38,7 +38,7 @@ function initWebSocket() {
   websocket = new WebSocket(gateway);
   websocket.onopen = onOpen;
   websocket.onclose = onClose;
-  websocket.onmessage = onMessage; /* <-- add this line*/
+  /*websocket.onmessage = onMessage; /* <-- add this line*/
 }
 function onOpen(event) {
   console.log('Connection opened');
@@ -131,7 +131,7 @@ function sCol(na, col) {
 function toggleLiveview() { 
   liveview = !liveview;
   d.getElementById("liveview").style.display = (liveview) ? "block" : "none";
-  var url = `http://192.168.178.25/liveview`;
+  var url = `http://192.168.178.40/liveview`;
   d.getElementById('liveview').src = (liveview) ? url:"about:blank";
   d.getElementById("buttonLv").className = (liveview) ? "active":"";
   if (!liveview && websocket && websocket.readyState === WebSocket.OPEN) websocket.send(`{'lv':false}`); 

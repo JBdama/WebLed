@@ -10,7 +10,7 @@
 #include "text.h"
 #include "liveview.h"
 const int LED_PIN = D4;
-const int LED_COUNT = 8;
+const int LED_COUNT = 200;
 
 AsyncWebServer server(80);
 AsyncWebSocket wSocket("/ws");
@@ -20,49 +20,56 @@ mgr mager(states);
 std::stringstream ss;
 std::string ss2;
 std::vector<String> slaves_list;
+
+const uint8_t gRb[3] = {1, 0, 2};
+uint8_t *point ;
 bool lv = false;
 const char *ssid = "Devolo";
 const char *password = "62122607890816550026";
 bool ledState = false;
-void start_up() {
+void start_up()
+{
   mager.setup_mgr();
 }
-void choose_command(JsonObject dataa) {        
-        for (JsonPair kv : dataa)
-        {
-            const char *key = kv.key().c_str();
-            Serial.println(key);
-            if (strcmp(key, "b") == 0)
-            {
-                mager.b = dataa[key];
-                states.set_brs(mager.b);
-                Serial.println(states.brs);
-            }
-            if (strcmp(key, "c") == 0)
-            {
-                mager.rgb[0] = dataa[key]["r"];
-                mager.rgb[1] = dataa[key]["g"];
-                mager.rgb[2] = dataa[key]["b"];
-                Serial.println("color");
-                Serial.println(mager.rgb[0]);
-                Serial.println(mager.rgb[1]);
-                Serial.println(mager.rgb[2]);
-                mager.updateLeds();
-            }
-            if (strcmp(key, "m") == 0)
-            {
-                mager.m = dataa[key];
-                mager.updateLeds();
-            }
-            if (strcmp(key, "p") == 0)
-            {
-                mager.power = dataa[key];
-                mager.fade_power(mager.power);
-            }
-            if (strcmp(key, "lv") == 0) {
-              lv = !lv;
-            }
-        }
+void choose_command(JsonObject dataa)
+{
+  for (JsonPair kv : dataa)
+  {
+    const char *key = kv.key().c_str();
+    Serial.println(key);
+    if (strcmp(key, "b") == 0)
+    {
+      mager.b = dataa[key];
+      states.set_brs(mager.b);
+      Serial.println(states.brs);
+    }
+    if (strcmp(key, "c") == 0)
+    {
+      mager.rgb[0] = dataa[key]["r"];
+      mager.rgb[1] = dataa[key]["g"];
+      mager.rgb[2] = dataa[key]["b"];
+      Serial.println("color");
+      Serial.println(mager.rgb[0]);
+      Serial.println(mager.rgb[1]);
+      Serial.println(mager.rgb[2]);
+      mager.updateLeds();
+    }
+    if (strcmp(key, "m") == 0)
+    {
+      mager.m = dataa[key];
+      mager.updateLeds();
+    }
+    if (strcmp(key, "p") == 0)
+    {
+      mager.power = dataa[key];
+      mager.fade_power(mager.power);
+    }
+    if (strcmp(key, "lv") == 0)
+    {
+      lv = !lv;
+      point = strip.getPixels();
+    }
+  }
 }
 void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
 {
@@ -72,15 +79,15 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
     String fetch = (char *)data;
     StaticJsonDocument<200> doc;
     DeserializationError error = deserializeJson(doc, data);
-      if (error)
-      {
-          Serial.println("Error");
-          Serial.println(error.c_str());
-      }
-      JsonObject obj = doc.as<JsonObject>();
-      
-      Serial.println(fetch);
-      choose_command(obj);
+    if (error)
+    {
+      Serial.println("Error");
+      Serial.println(error.c_str());
+    }
+    JsonObject obj = doc.as<JsonObject>();
+
+    Serial.println(fetch);
+    choose_command(obj);
   }
 }
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
@@ -175,8 +182,8 @@ void startWebSocket()
             { request->send(200, "stylesheet/css", message_css2); });
   server.on("/rain.css", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "stylesheet/css", message_css); });
-  server.on("/liveview", HTTP_GET, [](AsyncWebServerRequest *request) 
-            { request->send(200, "text/html", message_lv);});
+  server.on("/liveview", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/html", message_lv); });
   wSocket.onEvent(onWsEvent);
 
   server.addHandler(&wSocket);
@@ -215,16 +222,30 @@ void scanSlave()
     }
   }
 }
+String getLeds() {
+  std::string led_array = "";
+  for (int i = 0; i < LED_COUNT ; i ++) {
+    led_array += "\"";
+    for (int j = 0  ; j < 3; j++) {
+      ss.str(std::string());
+      ss <<  std::hex << (int)point[3*i + gRb[j]];
+      if (ss.str().size() < 2) led_array += "0" ;
+      led_array += ss.str();
+    }
+    led_array += "\"";
+    led_array += ",";
+  }
+  led_array.pop_back();
+  led_array = "{\"leds\":[" + led_array + "]}";
+  //Serial.println(led_array.c_str());
+  return led_array.c_str();
+}
 void loopen()
 {
-    states.loope();
-      if (lv) {
-        ss2 = "";
-        for (int i=0; i<states.count;i++)
-          for (int j=0;j<3;j++) {
-            ss << std::hex << states.fRgb[j];
-            ss2 += ss.str();
-          }
-      }
+  states.loope();
+  if (lv)
+  {
+    wSocket.textAll(getLeds());
+  }
   wSocket.cleanupClients();
 }

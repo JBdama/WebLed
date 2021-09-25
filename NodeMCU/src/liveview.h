@@ -26,7 +26,12 @@ const char message_lv[] PROGMEM = R"rawliteral(
     <div id="canv" />
     <script>
         function updatePreview(leds) {
-            var str = "linear-gradient(90deg,#ff0000,#00ff00,#0000ff)";
+            /*var str = "linear-gradient(90deg,#ff0000,#00ff00,#0000ff)";*/
+            var str = "linear-gradient(90deg";
+            for (var i = 0; i < leds.length; i++) {
+                str += ",#" + leds[i];
+            }
+            str += ")";
             document.getElementById("canv").style.background = str;
         }
         function getLiveJson(event) {
@@ -37,13 +42,15 @@ const char message_lv[] PROGMEM = R"rawliteral(
                 }
             }
             catch (err) {
-                console.error("Live Preview Error: ", error)
+                console.error("Live Preview Error: ", err)
             }
         }
 
         var websocket = top.window.websocket;
         if (websocket && websocket.readyState === WebSocket.OPEN) {
             console.info("Using WebSocket");
+            websocket.send("{'lv':true}");
+
         } else {
             console.info("Peek WS Opening");
             websocket = new WebSocket("ws://192.168.178.40/ws");
@@ -53,7 +60,8 @@ const char message_lv[] PROGMEM = R"rawliteral(
             }
         }
     
-        websocket.addEventListener("message", getLiveJson);
+        /*websocket.addEventListener("message", getLiveJson);*/
+        websocket.onmessage = getLiveJson;
         var str = "linear-gradient(90deg,#ff0000,#00ff00,#0000f)";
             document.getElementById("canv").style.background = str;
     </script>

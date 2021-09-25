@@ -9,7 +9,7 @@
 
 #include "LedFunction.h"
 
-const int MAX_LED_COUNT = 300;
+const int MAX_LED_COUNT = 201;
 
 class LedStates
 {
@@ -34,26 +34,23 @@ public:
     count = pixels.numPixels();
     pixels.begin();
   }
-  void set_brs(uint8_t b)  {
-    brs = (float)b/(float)255;
+  void set_brs(uint8_t b)
+  {
+    brs = (float)b / (float)255;
   }
   void loope()
   {
-    if (function)
+    function->render();
+    if (active)
     {
-      function->render();
-      if (active)
-      {
-        if (oldfunction)
-        {
-          oldfunction->render();
-        }
-        fader_commit();
-      }
-      else
-      {
-        commit();
-      }
+
+      oldfunction->render();
+
+      fader_commit();
+    }
+    else
+    {
+      commit();
     }
   }
   void fader_start()
@@ -80,26 +77,33 @@ public:
     float f0 = 1 - f1;
     fader_fade(long(f0 * 0x10000), long(f1 * 0x10000));
   }
-  void setPixels() {
-    for (int i=0;i<count; i++) {
-      if (!active) 
-        for (int j=0;j<3; j++) fRgb[j] = values[i][j]*brs;
+  void setPixels(long f1 = 1, long f0 = 1)
+  {
+    for (int i = 0; i < count; i++)
+    {
+      if (!active)
+      {
+        fRgb[0] = values[i][0] * brs;
+        fRgb[1] = values[i][1] * brs;
+        fRgb[2] = values[i][2] * brs;
+      }
       else
-        for (int j=0;j<3;j++) fRgb[j] = ((values[i][0] + values_to[i][0]) >> 16)*brs;
-      pixels.setPixelColor(i, pixels.Color(fRgb[0], fRgb[1], fRgb[2]));
-
+      {
+        fRgb[0] = ((f0 * values[i][0] + f1 * values_to[i][0]) >> 16) * brs;
+        fRgb[1] = ((f0 * values[i][1] + f1 * values_to[i][1]) >> 16) * brs;
+        fRgb[2] = ((f0 * values[i][2] + f1 * values_to[i][2]) >> 16) * brs;
+      }
+      for (int j = 0; j < 3; j++)
+      {
+      }
     }
-
   }
   void fader_fade(long f0, long f1)
   {
     for (int i = 0; i < count; i++)
     {
-      fRgb[0] = ((f0 * values[i][0] + f1 * values_to[i][0]) >> 16)*brs;
-      fRgb[1] = ((f0 * values[i][1] + f1 * values_to[i][1]) >> 16)*brs;
-      fRgb[2] = ((f0 * values[i][2] + f1 * values_to[i][2]) >> 16)*brs;
-      setPixels();
-      //pixels.setPixelColor(i, pixels.Color(100, 100, 100));
+      pixels.setPixelColor(i, pixels.Color(((f0 * values[i][0] + f1 * values_to[i][0]) >> 16) * brs, ((f0 * values[i][1] + f1 * values_to[i][1]) >> 16) * brs, ((f0 * values[i][2] + f1 * values_to[i][2]) >> 16) * brs));
+      /*
       Serial.print(i);
       Serial.print("Werte von current: ");
       Serial.print((f0 * values[i][0]) >> 16);
@@ -114,6 +118,7 @@ public:
       Serial.print((f1 * values_to[i][1]) >> 16);
       Serial.print("  ");
       Serial.println((f1 * values_to[i][2]) >> 16);
+      */
     }
     pixels.show();
   }
@@ -121,10 +126,7 @@ public:
   {
     for (int i = 0; i < count; i++)
     {
-      fRgb[0] = values[i][0]*brs;
-      fRgb[1] = values[i][1]*brs;
-      fRgb[2] = values[i][2]*brs;
-      pixels.setPixelColor(i, pixels.Color(fRgb[0], fRgb[1], fRgb[2]));
+      pixels.setPixelColor(i, pixels.Color(values[i][0]*brs, values[i][1]*brs, values[i][2]*brs));
       /*
           Serial.print(i);
           Serial.print(" Rot ist ");
@@ -178,6 +180,4 @@ public:
     if (function)
       function->render();
   }
-
-  
 };
