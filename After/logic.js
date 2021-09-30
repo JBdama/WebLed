@@ -61,8 +61,9 @@ function onMessage(event) {
   }
   console.log("State", state);
 }
-window.addEventListener('load', onLoad);
+var page = window.addEventListener('load', onLoad);
 function onLoad(event) {
+  clearInterval(gyroID)
   initWebSocket();
   initButton();
 }
@@ -165,11 +166,11 @@ function logging() {
   var g =  Math.abs(beta) / 180 * 255;
   var b = Math.abs(gamma) / 90 * 255;
   console.log(r, g, b);
-  websocket.send(`{"c_g":[${r}, ${g}, ${b}]}`);
+  /*websocket.send(`{"c_g":[${r}, ${g}, ${b}]}`);*/
 }
 var gyroID = null;
-function setupGyro(state) {
-  if (state) {
+function setupGyro(gyrobool) {
+  if (gyrobool) {
     window.addEventListener('deviceorientation', handleOrientation);
     gyroID = setInterval(logging, 40)
   } else {
