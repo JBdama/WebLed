@@ -13,17 +13,34 @@
         var alpha = 0;
         var beta = 0;
         var gamma = 0;
-        window.addEventListener('deviceorientation', handleOrientation);
-
+        var gyro = false;
+        var gyrioID;
         function handleOrientation(event) {
             alpha = event.alpha;
             beta = event.beta;
             gamma = event.gamma;
         }
         function logging() {
-            console.log(alpha/360*255, Math.abs(beta)/180*255, Math.abs(gamma)/90*255);
+            console.log(alpha / 360 * 255, Math.abs(beta) / 180 * 255, Math.abs(gamma) / 90 * 255);
         }
-        setInterval(logging, 1000)
+        function setupGyro(bool) {
+            if (bool) {
+                window.addEventListener('deviceorientation', handleOrientation);
+                gyrioID = setInterval(logging, 100);
+            } else {
+                window.removeEventListener('deviceorientation', handleOrientation);
+                clearInterval(gyrioID);
+            }
+        }
+        function button(num) {
+            if (num === 2) {
+                console.log("Gyros");
+                setupGyro(true);
+            } else {
+                console.log("Gyros aus");
+                setupGyro(false);
+            }
+        }
   // Do stuff...
     </script>
 </body>
