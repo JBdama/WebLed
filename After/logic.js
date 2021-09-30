@@ -158,6 +158,7 @@ function handleOrientation(event) {
   alpha = event.alpha;
   beta = event.beta;
   gamma = event.gamma;
+  console.log("Gesetzt");
 }
 function logging() {
   var r = alpha / 360 * 255;
