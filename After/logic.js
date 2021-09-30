@@ -159,22 +159,21 @@ function handleOrientation(event) {
   alpha = event.alpha;
   beta = event.beta;
   gamma = event.gamma;
-  console.log("Gesetzt");
+  console.log("Gesetzt", beta);
 }
 function logging() {
   var r = alpha / 360 * 255;
-  var g =  Math.abs(beta) / 180 * 255;
+  var g = Math.abs(beta) / 180 * 255;
   var b = Math.abs(gamma) / 90 * 255;
   console.log(r, g, b);
   /*websocket.send(`{"c_g":[${r}, ${g}, ${b}]}`);*/
 }
 var gyroID = null;
+window.addEventListener('deviceorientation', handleOrientation);
 function setupGyro(gyrobool) {
   if (gyrobool) {
-    window.addEventListener('deviceorientation', handleOrientation);
     gyroID = setInterval(logging, 40)
   } else {
-    window.removeEventListener('deviceorientation', handleOrientation);
     clearInterval(gyroID);
   }
 }
@@ -187,13 +186,13 @@ function selectButton(number) {
     setupGyro(false);
     console.log("Gryos aus ");
   }
-    /*
-  if (last !== null) {
-    d.getElementById(last).className = "inactive";
-  }
-  d.getElementById(button).className = "active";
-  last = button;
-  */
+  /*
+if (last !== null) {
+  d.getElementById(last).className = "inactive";
+}
+d.getElementById(button).className = "active";
+last = button;
+*/
 }
 function defColor(arg) {
   var color2 = { r: 0, g: 0, b: 0 };
