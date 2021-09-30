@@ -6,8 +6,11 @@ var d = document;
 var last = null;
 var lastC = null;
 var json = null;
+var alpha = null;
+var beta = null;
+var gamma = null;
 var c = { r: 0, g: 0, b: 0 };
-var b = 120;
+var br = 120;
 var f = 0;
 var gateway = `ws://${window.location.hostname}/ws`;
 var websocket;
@@ -83,8 +86,8 @@ function loadPreset() {
 loadPreset();
 slider.onchange = function () {
   var value = this.value;
-  var b = "{ b:"+ this.value +' }';
-  posting(b);
+  var br = "{ b:" + this.value + ' }';
+  posting(br);
 };
 
 colorPicker.on("color:change", function (color) {
@@ -93,7 +96,7 @@ colorPicker.on("color:change", function (color) {
 colorPicker.on("input:end", function (input) {
   c = input.rgb;
   console.log(JSON.stringify(c), c);
-  posting("{ c:"+ JSON.stringify(c)+" }");
+  posting("{ c:" + JSON.stringify(c) + " }");
   /*let rgb = colorPicker.color.rgb;*/
   if (lastC !== null) {
     d.getElementById(lastC).style.backgroundColor = input.hexString;
@@ -128,13 +131,13 @@ function requestJSON(arg) {
 function sCol(na, col) {
   d.documentElement.style.setProperty(na, col);
 }
-function toggleLiveview() { 
+function toggleLiveview() {
   liveview = !liveview;
   d.getElementById("liveview").style.display = (liveview) ? "block" : "none";
   var url = `http://192.168.178.40/liveview`;
-  d.getElementById('liveview').src = (liveview) ? url:"about:blank";
-  d.getElementById("buttonLv").className = (liveview) ? "active":"";
-  if (!liveview && websocket && websocket.readyState === WebSocket.OPEN) websocket.send(`{'lv':false}`); 
+  d.getElementById('liveview').src = (liveview) ? url : "about:blank";
+  d.getElementById("buttonLv").className = (liveview) ? "active" : "";
+  if (!liveview && websocket && websocket.readyState === WebSocket.OPEN) websocket.send(`{'lv':false}`);
 
 }
 function toggleSync() {
@@ -151,10 +154,38 @@ function toggleTheme() {
   theme = !theme;
   console.log(theme);
 }
-
+function handleOrientation(event) {
+  alpha = event.alpha;
+  beta = event.beta;
+  gamma = event.gamma;
+}
+function logging() {
+  var r = alpha / 360 * 255;
+  var g =  Math.abs(beta) / 180 * 255;
+  var b = Math.abs(gamma) / 90 * 255;
+  console.log(r, g, b);
+  websocket.send(`{"c_g":[${r}, ${g}, ${b}]}`);
+}
+var gyroID = null;
+function setupGyro(state) {
+  if (state) {
+    window.addEventListener('deviceorientation', handleOrientation);
+    gyroID = setInterval(logging, 40)
+  } else {
+    window.removeEventListener('deviceorientation', handleOrientation);
+    clearInterval(gyroID);
+  }
+}
 function selectButton(number) {
-  posting('{ m:' +number+' }');
-  /*
+  posting('{ m:' + number + ' }');
+  if (number === 2) {
+    setupGyro(true);
+    console.log("gyros");
+  } else {
+    setupGyro(false);
+    console.log("Gryos aus ");
+  }
+    /*
   if (last !== null) {
     d.getElementById(last).className = "inactive";
   }

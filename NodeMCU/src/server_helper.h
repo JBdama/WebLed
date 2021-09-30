@@ -36,7 +36,7 @@ void choose_command(JsonObject dataa)
   for (JsonPair kv : dataa)
   {
     const char *key = kv.key().c_str();
-    Serial.println(key);
+    //Serial.println(key);
     if (strcmp(key, "b") == 0)
     {
       mager.b = dataa[key];
@@ -49,10 +49,13 @@ void choose_command(JsonObject dataa)
       mager.rgb[1] = dataa[key]["g"];
       mager.rgb[2] = dataa[key]["b"];
       Serial.println("color");
-      Serial.println(mager.rgb[0]);
-      Serial.println(mager.rgb[1]);
-      Serial.println(mager.rgb[2]);
+
       mager.updateLeds();
+    }
+    if (strcmp(key, "c_g") == 0) {
+      states.active_c[0] = dataa[key][0];
+      states.active_c[1] = dataa[key][1];
+      states.active_c[2] = dataa[key][2];
     }
     if (strcmp(key, "m") == 0)
     {

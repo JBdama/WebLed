@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var alpha = 0;
+        var beta = 0;
+        var gamma = 0;
+        window.addEventListener('deviceorientation', handleOrientation);
+
+        function handleOrientation(event) {
+            alpha = event.alpha;
+            beta = event.beta;
+            gamma = event.gamma;
+        }
+        function logging() {
+            console.log(alpha/360*255, Math.abs(beta)/180*255, Math.abs(gamma)/90*255);
+        }
+        setInterval(logging, 1000)
+  // Do stuff...
+    </script>
+</body>
+
+</html>

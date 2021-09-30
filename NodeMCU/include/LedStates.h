@@ -17,6 +17,7 @@ public:
   uint8_t values[MAX_LED_COUNT][3] = {{0}};
   uint8_t values_to[MAX_LED_COUNT][3] = {{0}};
   uint8_t rf, gf, bf; //
+  uint8_t active_c[3] = {0, 0, 0};
   uint8_t fRgb[3] = {0, 0, 0};
   int count = 0;
   float brs = 0;
@@ -76,6 +77,10 @@ public:
     float f1 = (float)t / duration;
     float f0 = 1 - f1;
     fader_fade(long(f0 * 0x10000), long(f1 * 0x10000));
+  }
+  void loadRGB2(uint8_t *rgb) {
+      for (int i =0;i<3;i++) rgb [i] = active_c[i];
+      Serial.println(active_c[0]); 
   }
   void setPixels(long f1 = 1, long f0 = 1)
   {

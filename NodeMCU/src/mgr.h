@@ -2,6 +2,7 @@
 #include "LedFunction.h"
 #include "waveFunction.h"
 #include "SimpleFunction.h"
+#include "G_Simple.h"
 
 //#include "LedStates.h"
 class mgr
@@ -45,7 +46,8 @@ public:
             waveFunction *f = new waveFunction;
             initLeds(f);
         } else if (m == 2) {
-            
+            G_Simple *f = new G_Simple;   
+            initLeds(f);
         }
     }
     void fade_power(bool state)
